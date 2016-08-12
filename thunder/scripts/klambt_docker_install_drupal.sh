@@ -10,7 +10,7 @@ if [ "$INSTALL_DRUPAL" = 1 ]; then
     echo '#############################################'
 
     drush dl thunder --destination=/var/www/html
-    dir=`ls -l /var/www/html | awk '{print $9}' | grep 'drupal-'`
+    dir=`ls -l /var/www/html | awk '{print $9}' | grep 'thunder-'`
     mv $dir/* .
     chown -R www-data:www-data /var/www/html
 else
