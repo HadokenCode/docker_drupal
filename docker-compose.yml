@@ -34,22 +34,23 @@ services:
     ports:
       - "81:80"    
     links:
-      - drupal_database      
+      - drupal_database:db     
   webserver:
-    image: klambt/docker_drupal:latest
-    container_name: docker_drupal
+    image: klambt/drupal:latest
+    container_name: webserver_drupal
     links:
       - drupal_memcached
       - drupal_solr
       - drupal_database
   drupal_varnish:
-    image: million12/varnish:latest
-    container_name: drupal_varnish
-    environment:
-      - VCL_CONFIG=/var/www/private/varnish.vcl        
-    volumes_from:
-      - webserver:ro
+    image: klambt/varnish:latest
+    container_name: drupal_varnish   
     links: 
-      - webserver
+      - webserver:backend-app
     ports:
-      - "80:80"      
+      - "80:80"
+  watchtower:
+    image: centurylink/watchtower
+    container_name: watchtower
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock

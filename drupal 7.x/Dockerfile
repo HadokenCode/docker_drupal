@@ -1,20 +1,16 @@
-FROM klambt/webserver
+FROM klambt/webserver:latest
 MAINTAINER Tim Weyand <tim.weyand@klambt.de>
 
-RUN apt-get update \
-    && apt-get upgrade -y \
-    && apt-get install -y mysql-client \
-    && php -r "readfile('https://s3.amazonaws.com/files.drush.org/drush.phar');" > /root/drush
-    && php /root/drush core-status
-    && chmod +x /root/drush
-    && sudo mv /root/drush /usr/local/bin
-    && drush init
-    && drush pm-download --destination=/var/www/html \
-    && dir=`ls -l /var/www/html | awk '{print $9}' | grep 'drupal-'` \
-    && mv $dir/* . \ 
-    && chown -R www-data:www-data /var/www/html
+ENV UPDATE_DEBIAN              1
+ENV INSTALL_DRUSH              1
+ENV INSTALL_DRUPAL             1
 
+COPY ./scripts/* /usr/local/bin/
 
-# drush site-install --db-url=mysql://root:root@drupal_database/drupal7 -y
+RUN chmod +x /usr/local/bin/klambt_docker_*.sh \
+ && /usr/local/bin/klambt_docker_update_debian.sh \
+ && /usr/local/bin/klambt_docker_install_drush.sh \
+ && /usr/local/bin/klambt_docker_install_drupal.sh 
 
-
+# @todo customization
+CMD ["/usr/local/bin/klambt_docker_drupal_start.sh"]

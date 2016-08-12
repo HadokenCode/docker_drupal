@@ -1,16 +1,16 @@
-FROM klambt/webserver
+FROM klambt/webserver:latest
 MAINTAINER Tim Weyand <tim.weyand@klambt.de>
 
-RUN apt-get update \
-    && apt-get upgrade -y \
-    && apt-get install -y drush
+ENV UPDATE_DEBIAN              1
+ENV INSTALL_DRUSH              1
+ENV INSTALL_DRUPAL             1
 
-# https://www.drupal.org/node/3060/release
-ENV DRUPAL_VERSION 8.1.8
-ENV DRUPAL_MD5 7c00b318590a22f2df7a18cf70df06dc
+COPY ./scripts/* /usr/local/bin/
 
-RUN curl -fSL "http://ftp.drupal.org/files/projects/drupal-${DRUPAL_VERSION}.tar.gz" -o drupal.tar.gz \
-	&& echo "${DRUPAL_MD5} *drupal.tar.gz" | md5sum -c - \
-	&& tar -xz --strip-components=1 -f drupal.tar.gz \
-	&& rm drupal.tar.gz \
-	&& chown -R www-data:www-data sites
+RUN chmod +x /usr/local/bin/klambt_docker_*.sh \
+ && /usr/local/bin/klambt_docker_update_debian.sh \
+ && /usr/local/bin/klambt_docker_install_drush.sh \
+ && /usr/local/bin/klambt_docker_install_drupal.sh 
+
+# @todo customization
+CMD ["/usr/local/bin/klambt_docker_drupal_start.sh"]
