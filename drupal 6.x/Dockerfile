@@ -1,4 +1,4 @@
-FROM klambt/webserver:latest
+FROM klambt/webserver:php-5.6
 MAINTAINER Tim Weyand <tim.weyand@klambt.de>
 
 ENV UPDATE_DEBIAN              1
