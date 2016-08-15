@@ -5,6 +5,7 @@ ENV UPDATE_DEBIAN              1
 ENV INSTALL_DRUSH              1
 ENV INSTALL_DRUPAL             1
 
+COPY ./conf /root/conf
 COPY ./scripts/* /usr/local/bin/
 
 RUN chmod +x /usr/local/bin/klambt_docker_*.sh \
