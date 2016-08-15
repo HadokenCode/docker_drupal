@@ -14,7 +14,7 @@ services:
     image: memcached:alpine
     container_name: drupal_memcached
   drupal_solr:
-    image: solr:alpine
+    image: solr:5-alpine
     container_name: drupal_solr
     ports:
       - "8983:8983"
