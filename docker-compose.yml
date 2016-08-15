@@ -23,11 +23,8 @@ services:
     container_name: drupal_database
     ports:
       - "3306:3306"
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=drupal8
-      - MYSQL_USER=drupal8
-      - MYSQL_PASSWORD=drupal8
+    env_file:
+      - ./database.env
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: drupal_phpmyadmin
@@ -37,11 +34,16 @@ services:
       - drupal_database:db     
   webserver:
     image: klambt/drupal:latest
-    container_name: webserver_drupal
+    container_name: drupal_webserver
     links:
       - drupal_memcached
       - drupal_solr
       - drupal_database
+    env_file:
+      - ./database.env
+      - ./drupal.env
+    depends_on:
+      - drupal_database      
   drupal_varnish:
     image: klambt/varnish:latest
     container_name: drupal_varnish   
