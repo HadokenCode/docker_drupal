@@ -9,8 +9,10 @@ if [ "$INSTALL_DRUPAL" = 1 ]; then
     echo '#                                           #'
     echo '#############################################'
 
+    rm -rf /var/www/html/*
     drush dl drupal-7 --destination=/var/www/html
     dir=`ls -l /var/www/html | awk '{print $9}' | grep 'drupal-'`
+    shopt -s dotglob
     mv $dir/* .
     rm -rf $dir
     chown -R www-data:www-data /var/www/html
