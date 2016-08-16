@@ -13,11 +13,6 @@ services:
   drupal_memcached:
     image: memcached:alpine
     container_name: drupal_memcached
-  drupal_solr:
-    image: solr:5-alpine
-    container_name: drupal_solr
-    ports:
-      - "8983:8983"
   drupal_database:
     image: mysql:5.7
     container_name: drupal_database
@@ -37,7 +32,6 @@ services:
     container_name: drupal_webserver
     links:
       - drupal_memcached
-      - drupal_solr
       - drupal_database
     env_file:
       - ./database.env
@@ -51,8 +45,13 @@ services:
       - webserver:backend-app
     ports:
       - "80:80"
-  watchtower:
-    image: centurylink/watchtower
-    container_name: watchtower
-    volumes:
-     - /var/run/docker.sock:/var/run/docker.sock
+#  drupal_solr:
+#    image: solr:5-alpine
+#    container_name: drupal_solr
+#    ports:
+#      - "8983:8983"      
+#  watchtower:
+#    image: centurylink/watchtower
+#    container_name: watchtower
+#    volumes:
+#     - /var/run/docker.sock:/var/run/docker.sock

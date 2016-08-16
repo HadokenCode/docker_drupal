@@ -16,6 +16,7 @@ if [ "$INSTALL_DRUPAL" = 1 ]; then
     mv $dir/* .
     rm -rf $dir
     chown -R www-data:www-data /var/www/html
+    drush pm-download -y $(grep -vE "^\s*#" /root/conf/drupal-7-modules.conf  | tr "\n" " ")
 else
     echo '#############################################'
     echo '#          NOT INSTALLING DRUPAL            #'
