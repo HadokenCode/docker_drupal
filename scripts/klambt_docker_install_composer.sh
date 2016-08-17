@@ -1,7 +1,7 @@
 #!/bin/bash
 mkdir -p /var/www/.composer
 mkdir -p /var/www/html/sites/default/files/composer
-mkdir -p /var/www/html/sites/default/files/vendor
+mkdir -p /var/www/html/sites/all/vendor
 
 whoami
 cd /var/www/html/sites/default/files/composer/
@@ -10,3 +10,4 @@ composer require facebook/facebook-instant-articles-sdk-php
 
 
 chown -R www-data:www-data /var/www/html/sites/default/files
+chown -R www-data:www-data /var/www/html/sites/all/vendor
