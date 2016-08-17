@@ -22,6 +22,7 @@ if [ "$INSTALL_DRUPAL" = 1 ]; then
     wget https://getcomposer.org/installer
     php installer
     mv composer.phar /usr/local/bin/composer
+    composer require facebook/facebook-instant-articles-sdk-php
 else
     echo '#############################################'
     echo '#          NOT INSTALLING DRUPAL            #'

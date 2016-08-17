@@ -33,6 +33,7 @@ services:
     links:
       - drupal_memcached
       - drupal_database
+      - drupal_solr
     env_file:
       - ./database.env
       - ./drupal.env
@@ -45,13 +46,13 @@ services:
       - webserver:backend-app
     ports:
       - "80:80"
-#  drupal_solr:
-#    image: solr:5-alpine
-#    container_name: drupal_solr
-#    ports:
-#      - "8983:8983"      
-#  watchtower:
-#    image: centurylink/watchtower
-#    container_name: watchtower
-#    volumes:
-#     - /var/run/docker.sock:/var/run/docker.sock
+  drupal_solr:
+    image: klambt/solr
+    container_name: drupal_solr
+    ports:
+      - "8983:8983"      
+  watchtower:
+    image: centurylink/watchtower
+    container_name: watchtower
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock
