@@ -15,14 +15,15 @@ if [ "$INSTALL_DRUPAL" = 1 ]; then
     shopt -s dotglob
     mv $dir/* .
     rm -rf $dir
-    chown -R www-data:www-data /var/www/html
     drush pm-download -y $(grep -vE "^\s*#" /root/conf/drupal-7-modules.conf  | tr "\n" " ")
 
-    cd /tmp/
+    mkdir -p /var/www/html/sites/default/files/composer
+    cd /var/www/html/sites/default/files/composer/
     wget https://getcomposer.org/installer
     php installer
     mv composer.phar /usr/local/bin/composer
-    composer require facebook/facebook-instant-articles-sdk-php
+
+    chown -R www-data:www-data /var/www
 else
     echo '#############################################'
     echo '#          NOT INSTALLING DRUPAL            #'

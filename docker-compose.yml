@@ -51,8 +51,8 @@ services:
     container_name: drupal_solr
     ports:
       - "8983:8983"      
-  watchtower:
-    image: centurylink/watchtower
-    container_name: watchtower
-    volumes:
-     - /var/run/docker.sock:/var/run/docker.sock
+#  watchtower:
+#    image: centurylink/watchtower
+#    container_name: watchtower
+#    volumes:
+#     - /var/run/docker.sock:/var/run/docker.sock
