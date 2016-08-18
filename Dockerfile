@@ -13,10 +13,6 @@ RUN chmod +x /usr/local/bin/klambt_docker_*.sh \
  && /usr/local/bin/klambt_docker_update_debian.sh \
  && /usr/local/bin/klambt_docker_install_drush.sh \
  && /usr/local/bin/klambt_docker_install_drupal.sh
- 
-USER www-data
- 
-RUN /usr/local/bin/klambt_docker_install_composer.sh
-USER root
+
 # @todo customization
 CMD ["/usr/local/bin/klambt_docker_drupal_start.sh"]
