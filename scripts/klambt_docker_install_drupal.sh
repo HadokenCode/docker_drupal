@@ -15,15 +15,36 @@ if [ "$INSTALL_DRUPAL" = 1 ]; then
     shopt -s dotglob
     mv $dir/* .
     rm -rf $dir
+
+    echo '#############################################'
+    echo '#       INSTALLING DRUPAL Modules           #'
+    echo '#                                           #'
+    echo '#  This can be disabled during build with:  #'
+    echo '#  -e "INSTALL_DRUPAL=0"                    #'
+    echo '#                                           #'
+    echo '#############################################'
+
     drush pm-download -y $(grep -vE "^\s*#" /root/conf/drupal-7-modules.conf  | tr "\n" " ")
-
-    mkdir -p /var/www/html/sites/default/files/composer
-    cd /var/www/html/sites/default/files/composer/
-    wget https://getcomposer.org/installer
-    php installer
-    mv composer.phar /usr/local/bin/composer
-
     chown -R www-data:www-data /var/www
+
+
+    echo '#############################################'
+    echo '#           Prepare Composer                #'
+    echo '#                                           #'
+    echo '#  This can be disabled during build with:  #'
+    echo '#  -e "INSTALL_DRUPAL=0"                    #'
+    echo '#                                           #'
+    echo '#############################################'
+
+    mkdir -p /var/www/.composer
+    mkdir -p /var/www/html/sites/default/files/composer
+    mkdir -p /var/www/html/sites/all/vendor
+    cd /var/www/html/sites/default/files/composer/
+    composer install
+    composer require facebook/facebook-instant-articles-sdk-php
+
+    chown -R www-data:www-data /var/www/html/sites/default/files
+    chown -R www-data:www-data /var/www/html/sites/all/vendor
 else
     echo '#############################################'
     echo '#          NOT INSTALLING DRUPAL            #'
