@@ -22,6 +22,7 @@ while read STRING
 do
   STRING=${STRING%$'\r'}
   drush pm-enable -y $STRING
+  drush cache-clear drush
 done < /root/conf/drupal-7-modules.conf
 
 #Write the Drupal Configuration
