@@ -5,7 +5,7 @@ echo '#                                           #'
 echo '#                                           #'
 echo '#############################################'
 cd $WORKDIR
-mysql -u root --password=root -h drupal_database -D drupal --execute="SELECT name FROM system WHERE type='module' AND status='1' AND filename LIKE 'sites/all/modules/%'" -s | tail -n +1 > /root/conf/drupal-installed-modules.txt
+mysql -u $MYSQL_USER --password=$MYSQL_PASSWORD -h $MYSQL_LINK -P $MYSQL_PORT -D $MYSQL_DATABASE --execute="SELECT name FROM system WHERE type='module' AND status='1' AND filename LIKE 'sites/all/modules/%'" -s | tail -n +1 > /root/conf/drupal-installed-modules.txt
 #enable one module at a time
 while read STRING
 do
