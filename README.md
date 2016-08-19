@@ -25,6 +25,37 @@ TAGS
 | drupal-6 |  Drupal 6 Version - Just to test if we can be flexible with this docker ([php:5.6-apache](https://hub.docker.com/_/php/)) | [![](https://images.microbadger.com/badges/image/klambt/drupal:drupal-6.svg)](https://microbadger.com/images/klambt/drupal:drupal-6 "Get your own image badge on microbadger.com") |
 
 
+Drupal 7 Modules enabled
+=======
+* [varnish] (https://www.drupal.org/project/varnish)
+* [expire] (https://www.drupal.org/project/expire)
+* [memcache] (https://www.drupal.org/project/memcache)
+* [search_api] (https://www.drupal.org/project/search_api)
+* [search_api_solr] (https://www.drupal.org/project/search_api_solr)
+* [xmlsitemap] (https://www.drupal.org/project/xmlsitemap)
+* [rules] (https://www.drupal.org/project/rules)
+* [redirect] (https://www.drupal.org/project/redirect)
+* [fast_404] (https://www.drupal.org/project/fast_404)
+* [composer_manager] (https://www.drupal.org/project/composer_manager)
+* [fb_instant_articles] (https://www.drupal.org/project/fb_instant_articles)
+* [amp] (https://www.drupal.org/project/amp)
+* [amptheme] (https://www.drupal.org/project/amptheme)
+
+Environment Options (Runtime(
+| option                          | description                      |  Default Values |
+| ---------------------------- | -------------------------------- | -------------------------------- | 
+| DRUPAL_USERNAME | Admin Username (User 0) | admin |
+| DRUPAL_USER_PASSWORD | Admin Password | admin |
+| DRUPAL_USER_MAIL | Admin User E-Mail Adress | webmaster@domain.tld |
+| DRUPAL_SITE_MAIL | E-Mail Adress of the Site | webmaster@domain.tld |
+| DRUPAL_MEMCACHE_SERVER | Linkname or Hostname to Memcache Server | 0 = disabled |
+| DRUPAL_VARNISH_SERVER | Linkname or Hostip to Varnish Server | 0 = disabled |
+| DRUPAL_VARNISH_KEY | Varnish Key to Ban Content on Varnish Server | --- |
+| MYSQL_DATABASE | Drupal Database | drupal |
+| MYSQL_USER | Username | drupal | 
+| MYSQL_PASSWORD | User Password | drupal |
+| MYSQL_LINK | Linkname or Hostname to Database Server | database_server |
+
 PULL
 =======
 ```docker pull klambt/drupal:latest```

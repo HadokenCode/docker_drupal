@@ -5,6 +5,18 @@ ENV UPDATE_DEBIAN              1
 ENV INSTALL_DRUSH              1
 ENV INSTALL_DRUPAL             1
 ENV INSTALL_COMPOSER           1
+ENV MYSQL_DATABASE             drupal
+ENV MYSQL_USER                 drupal
+ENV MYSQL_PASSWORD             drupal
+ENV MYSQL_PORT                 3306
+ENV MYSQL_LINK                 database_server
+ENV DRUPAL_USERNAME            admin
+ENV DRUPAL_USER_PASSWORD       admin
+ENV DRUPAL_USER_MAIL           webmaster@domain.tld
+ENV DRUPAL_SITE_MAIL           webmaster@domain.tld
+ENV DRUPAL_MEMCACHE_SERVER     0
+ENV DRUPAL_VARNISH_SERVER      0
+ENV DRUPAL_VARNISH_KEY         xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxx
 
 COPY ./conf /root/conf
 COPY ./scripts/* /usr/local/bin/
