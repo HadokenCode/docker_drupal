@@ -21,7 +21,7 @@ echo ''  >> sites/default/settings.php
     echo ""; \
     echo "# Automatic Database configuration;"; \
     echo "\$databases = array ("; \
-    echo "default' =>"; \
+    echo "'default' =>"; \
     echo "array ("; \
     echo "        'default' =>"; \
     echo "        array ("; \
