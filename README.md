@@ -41,7 +41,16 @@ Drupal 7 Modules enabled
 * [amp] (https://www.drupal.org/project/amp)
 * [amptheme] (https://www.drupal.org/project/amptheme)
 
-Environment Options (Runtime(
+Environment Options \(Build\)
+======
+| option                          | description                      |  Default Values |
+| ---------------------------- | -------------------------------- | -------------------------------- | 
+| UPDATE_DEBIAN | Update Debian Packages | 1 = true |
+| INSTALL_DRUSH | Install [Drush](http://www.drush.org/) | 1 = true |
+| INSTALL_DRUPAL | Install [Drupal](http://www.drupal.org/) | 1 = true |
+
+Environment Options \(Runtime\)
+======
 | option                          | description                      |  Default Values |
 | ---------------------------- | -------------------------------- | -------------------------------- | 
 | DRUPAL_USERNAME | Admin Username (User 0) | admin |
