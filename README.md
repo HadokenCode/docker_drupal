@@ -7,15 +7,22 @@ This Dockerimage is intented to be used as a Drupal Base Image for our Sites. Yo
 
 The Image is based on klambt/webserver ([Dockerhub](https://hub.docker.com/r/klambt/webserver/) or [Github](https://github.com/klambt/docker_webserver)) which is an enhanced image of [php:7.0-apache](https://hub.docker.com/_/php/).
 
-Autobuild
-======
+PULL
+=======
+```docker pull klambt/drupal:latest```
+
+Building
+========
+
+```docker build -t klambt/drupal:latest .```
+
+## Autobuild
 This Image will be updated if:
 * The [php](https://hub.docker.com/_/php/) Base Image is Updated (hook)
 * The [drupal](https://hub.docker.com/_/drupal/) Image is Updated (hook)
 * We change it in github
 
-TAGS
-======
+##TAGS
 | tag                          | description                      | size |
 | ---------------------------- | -------------------------------- | ---- |
 | latest | currently drupal 7 for development purposes   | [![](https://images.microbadger.com/badges/image/klambt/drupal.svg)](https://microbadger.com/images/klambt/drupal "Get your own image badge on microbadger.com") |
@@ -25,8 +32,7 @@ TAGS
 | drupal-6 |  Drupal 6 Version - Just to test if we can be flexible with this docker ([php:5.6-apache](https://hub.docker.com/_/php/)) | [![](https://images.microbadger.com/badges/image/klambt/drupal:drupal-6.svg)](https://microbadger.com/images/klambt/drupal:drupal-6 "Get your own image badge on microbadger.com") |
 
 
-Drupal 7 Modules enabled
-=======
+##Drupal 7 Modules enabled
 * [varnish] (https://www.drupal.org/project/varnish)
 * [expire] (https://www.drupal.org/project/expire)
 * [memcache] (https://www.drupal.org/project/memcache)
@@ -41,16 +47,21 @@ Drupal 7 Modules enabled
 * [amp] (https://www.drupal.org/project/amp)
 * [amptheme] (https://www.drupal.org/project/amptheme)
 
-Environment Options \(Build\)
+Settings & Customization
 ======
+
+## Environment Options
+
+### Build
+
 | option                          | description                      |  Default Values |
 | ---------------------------- | -------------------------------- | -------------------------------- | 
 | UPDATE_DEBIAN | Update Debian Packages | 1 = true |
 | INSTALL_DRUSH | Install [Drush](http://www.drush.org/) | 1 = true |
 | INSTALL_DRUPAL | Install [Drupal](http://www.drupal.org/) | 1 = true |
 
-Environment Options \(Runtime\)
-======
+### Runtime
+
 | option                          | description                      |  Default Values |
 | ---------------------------- | -------------------------------- | -------------------------------- | 
 | DRUPAL_USERNAME | Admin Username (User 0) | admin |
@@ -65,14 +76,32 @@ Environment Options \(Runtime\)
 | MYSQL_PASSWORD | User Password | drupal |
 | MYSQL_LINK | Linkname or Hostname to Database Server | database_server |
 
-PULL
-=======
-```docker pull klambt/drupal:latest```
+## Installing Drupal Modules 
 
-Building
-========
+### Build
+Modify the file [Dockerroot]/conf/drupal-7-modules.conf to your needs. It is a Textfile with one modulename in each line. The Modules will be downloaded and installed via drush
 
-```docker build -t klambt/drupal:latest .```
+*Example*
+```
+entity
+search_api
+search_api_page
+search_api_page_block
+search_api_solr
+varnish
+expire
+rules
+redirect
+fast_404
+memcache
+composer_manager
+fb_instant_articles
+amp
+amptheme
+xmlsitemap
+```
+
+
 
 *more documentation to follow*
 
