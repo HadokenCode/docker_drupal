@@ -19,7 +19,7 @@ ENV DRUPAL_VARNISH_SERVER      0
 ENV DRUPAL_VARNISH_KEY         xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxx
 ENV DRUPAL_INSTALL_MODULES     0
 ENV DEBIAN_INSTALL_PACKAGES    0
-ENV GIT_PULL_CUSTOM            1
+ENV GIT_PULL_CUSTOM            0
 ENV GIT_CUSTOM_SOURCES_SERVER  github.com
 ENV GIT_CUSTOM_SOURCES_REPOS   0
 ENV GIT_USERNAME               0
@@ -40,4 +40,4 @@ COPY ./custom_modules/* /var/www/html/sites/all/modules/custom/
 COPY ./custom_themes/* /var/www/html/sites/all/themes/custom/
 
 # @todo customization
-CMD ["/usr/local/bin/klambt_docker_drupal_start.sh"]
+CMD ["/usr/local/bin/klambt_docker_drupal_start-7.sh"]
