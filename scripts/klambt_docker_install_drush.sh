@@ -1,12 +1,10 @@
 #!/bin/bash
-echo '/scripts/install_drush.sh:'
-
 if [ "$INSTALL_DRUSH" = 1 ]; then
     echo '#############################################'
     echo '#            INSTALLING DRUSH               #'
     echo '#                                           #'
     echo '#  This can be disabled during build with:  #'
-    echo '#  -e "INSTALL_DRUSH=0"                     #'
+    echo '#  ENV INSTALL_DRUSH=0                      #'
     echo '#                                           #'
     echo '#############################################'
 
@@ -21,7 +19,7 @@ else
     echo '#          NOT INSTALLING DRUSH             #'
     echo '#                                           #'
     echo '#  This can be enabled during build with:   #'
-    echo '#  -e "INSTALL_DRUSH=1"                     #'
+    echo '#  ENV INSTALL_DRUSH=1                      #'
     echo '#                                           #'
     echo '#############################################'
 fi

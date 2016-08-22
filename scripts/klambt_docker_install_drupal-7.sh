@@ -5,7 +5,7 @@ if [ "$INSTALL_DRUPAL" = 1 ]; then
     echo '#            INSTALLING DRUPAL              #'
     echo '#                                           #'
     echo '#  This can be disabled during build with:  #'
-    echo '#  -e "INSTALL_DRUPAL=0"                    #'
+    echo '#  ENV INSTALL_DRUPAL=0                     #'
     echo '#                                           #'
     echo '#############################################'
 
@@ -15,24 +15,57 @@ if [ "$INSTALL_DRUPAL" = 1 ]; then
     shopt -s dotglob
     mv $dir/* .
     rm -rf $dir
+    mkdir -p /var/www/html/sites/all/modules/custom
+    mkdir -p /var/www/html/sites/all/themes/custom
 
     echo '#############################################'
-    echo '#       INSTALLING DRUPAL Modules           #'
+    echo '#       Downloading DRUPAL Modules          #'
     echo '#                                           #'
     echo '#  This can be disabled during build with:  #'
-    echo '#  -e "INSTALL_DRUPAL=0"                    #'
+    echo '#  ENV INSTALL_DRUPAL=0                     #'
     echo '#                                           #'
     echo '#############################################'
 
     drush pm-download -y $(grep -vE "^\s*#" /root/conf/drupal-7-modules.conf  | tr "\n" " ")
+
+
+if [ ! "$DRUPAL_INSTALL_MODULES" = 0 ]; then
+    echo '#############################################'
+    echo '#       INSTALLING DRUPAL Modules           #'
+    echo '#    based on $DRUPAL_INSTALL_MODULES       #'
+    echo '#                                           #'
+    echo '#  This can be disabled during build with:  #'
+    echo '#  ENV DRUPAL_INSTALL_MODULES=0             #'
+    echo '#                                           #'
+    echo '#############################################'
+
+    modules=$(echo $DRUPAL_INSTALL_MODULES | tr "," "\n")
+    for module in $modules
+    do
+        module=${module%$'\r'}
+        echo "Module $module missing ... Downloading ..."
+        drush pm-download -y $module
+    done
+
+    echo 'Setting DRUPAL_INSTALL_MODULES=0';
+    export DRUPAL_INSTALL_MODULES=0;
+else
+    echo '####################################################'
+    echo '#   No DRUPAL Modules to install found in          #'
+    echo '#          $DRUPAL_INSTALL_MODULES                 #'
+    echo '#                                                  #'
+    echo '#  This enabled during build with:                 #'
+    echo '#  ENV DRUPAL_INSTALL_MODULES= xmlsitemap,varnish  #'
+    echo '#                                                  #'
+    echo '####################################################'
+fi
+
     chown -R www-data:www-data /var/www
-
-
     echo '#############################################'
     echo '#           Prepare Composer                #'
     echo '#                                           #'
     echo '#  This can be disabled during build with:  #'
-    echo '#  -e "INSTALL_DRUPAL=0"                    #'
+    echo '#  ENV INSTALL_DRUPAL=0                     #'
     echo '#                                           #'
     echo '#############################################'
 
@@ -50,7 +83,7 @@ else
     echo '#          NOT INSTALLING DRUPAL            #'
     echo '#                                           #'
     echo '#  This can be enabled during build with:   #'
-    echo '#  -e "INSTALL_DRUPAL=1"                    #'
+    echo '#  ENV INSTALL_DRUPAL=1                     #'
     echo '#                                           #'
     echo '#############################################'
 fi

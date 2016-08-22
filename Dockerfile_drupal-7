@@ -11,7 +11,7 @@ ENV MYSQL_PASSWORD             drupal
 ENV MYSQL_PORT                 3306
 ENV MYSQL_LINK                 database_server
 ENV DRUPAL_USERNAME            admin
-ENV DRUPAL_USER_PASSWORD       0
+ENV DRUPAL_USER_PASSWORD       admin
 ENV DRUPAL_USER_MAIL           webmaster@domain.tld
 ENV DRUPAL_SITE_MAIL           webmaster@domain.tld
 ENV DRUPAL_MEMCACHE_SERVER     0

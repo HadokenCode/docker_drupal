@@ -86,15 +86,16 @@ if [ "$DRUPAL_VARNISH_SERVER" != 0 ]; then
 fi
 
 
-echo ''  
-echo '#################################'
-echo '#                               #'
-echo '#      Writing Config Done      #'
-echo '#                               #'
-echo '#################################'
-echo ''  
 
 if [ "$DRUPAL_VARNISH_SERVER" != 0 ]; then
+    echo ''  
+    echo '#################################'
+    echo '#                               #'
+    echo '# Configure Drupal for Varnish  #'
+    echo '#                               #'
+    echo '#################################'
+    echo ''  
+
     # Varnish Drush Config
     drush vset varnish_control_terminal "$DRUPAL_VARNISH_SERVER:6082"
     drush vset varnish_control_key "$DRUPAL_VARNISH_KEY"
