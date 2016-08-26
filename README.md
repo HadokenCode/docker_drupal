@@ -249,6 +249,8 @@ MYSQL_LINK=drupal_database
 *varnish.env*
 ```
 DRUPAL_VARNISH_KEY=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxx
+BACKEND_SERVER=drupal_webserver
+BACKEND_STYLE=drupal-7
 ```
 
 Starting up our Service with a single command:
