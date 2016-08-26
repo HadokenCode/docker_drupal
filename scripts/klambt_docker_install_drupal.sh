@@ -1,5 +1,13 @@
 #!/bin/bash
 
+version=drupal-7
+
+if [ ! -z "$1" ]; then
+  version=$1
+fi
+
+cp /root/conf/000-default.conf /etc/apache2/sites-enabled/
+
 if [ "$INSTALL_DRUPAL" = 1 ]; then
     echo '#############################################'
     echo '#            INSTALLING DRUPAL              #'
@@ -10,55 +18,15 @@ if [ "$INSTALL_DRUPAL" = 1 ]; then
     echo '#############################################'
 
     rm -rf /var/www/html/*
-    drush dl drupal-7 --destination=/var/www/html
+    drush dl $version --destination=/var/www/html
     dir=`ls -l /var/www/html | awk '{print $9}' | grep 'drupal-'`
     shopt -s dotglob
     mv $dir/* .
     rm -rf $dir
+
     mkdir -p /var/www/html/sites/all/modules/custom
     mkdir -p /var/www/html/sites/all/themes/custom
 
-    echo '#############################################'
-    echo '#       Downloading DRUPAL Modules          #'
-    echo '#                                           #'
-    echo '#  This can be disabled during build with:  #'
-    echo '#  ENV INSTALL_DRUPAL=0                     #'
-    echo '#                                           #'
-    echo '#############################################'
-
-    drush pm-download -y $(grep -vE "^\s*#" /root/conf/drupal-7-modules.conf  | tr "\n" " ")
-
-
-if [ ! "$DRUPAL_INSTALL_MODULES" = 0 ]; then
-    echo '#############################################'
-    echo '#       INSTALLING DRUPAL Modules           #'
-    echo '#    based on $DRUPAL_INSTALL_MODULES       #'
-    echo '#                                           #'
-    echo '#  This can be disabled during build with:  #'
-    echo '#  ENV DRUPAL_INSTALL_MODULES=0             #'
-    echo '#                                           #'
-    echo '#############################################'
-
-    modules=$(echo $DRUPAL_INSTALL_MODULES | tr "," "\n")
-    for module in $modules
-    do
-        module=${module%$'\r'}
-        echo "Module $module missing ... Downloading ..."
-        drush pm-download -y $module
-    done
-
-    echo 'Setting DRUPAL_INSTALL_MODULES=0';
-    export DRUPAL_INSTALL_MODULES=0;
-else
-    echo '####################################################'
-    echo '#   No DRUPAL Modules to install found in          #'
-    echo '#          $DRUPAL_INSTALL_MODULES                 #'
-    echo '#                                                  #'
-    echo '#  This enabled during build with:                 #'
-    echo '#  ENV DRUPAL_INSTALL_MODULES= xmlsitemap,varnish  #'
-    echo '#                                                  #'
-    echo '####################################################'
-fi
 
     chown -R www-data:www-data /var/www
     echo '#############################################'
@@ -87,5 +55,3 @@ else
     echo '#                                           #'
     echo '#############################################'
 fi
-
-

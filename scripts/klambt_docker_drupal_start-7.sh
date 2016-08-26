@@ -1,7 +1,17 @@
 #!/bin/bash
 
-if [! "$DEBIAN_INSTALL_PACKAGES" = 0 ]; then
+if [ ! "$DEBIAN_INSTALL_PACKAGES" = 0 ]; then
   klambt_docker_update_debian.sh
+fi
+
+if [ "$USE_NFS_CLIENT" = 1 ]; then
+  /usr/local/bin/klambt_docker_nfs.sh
+  if [ ! "$DRUPAL_FILE_NFS_DIR" = 1 ]; then
+     mkdir -p /mount/drupal-nfs-data-files
+     mkdir -p /tmp/local-files
+     cp -R sites/default/files/* /tmp/local-files
+     mount -t nfs $DRUPAL_FILE_NFS_DIR sites/default/files $NFS_OPTIONS
+  fi
 fi
 
 # WAIT FOR DATABASE
@@ -10,6 +20,11 @@ while ! mysqladmin ping -h"$MYSQL_LINK" --silent; do
     sleep 1
 done
 
+mkdir -p /tmp/drupal
+mkdir -p /var/www/private
+chmod 777 /tmp/drupal
+chown www-data:www-data /var/www/private
+
 if [ $(mysql -u $MYSQL_USER --password=$MYSQL_PASSWORD -h $MYSQL_LINK -D $MYSQL_DATABASE -P $MYSQL_PORT --execute="SHOW TABLES" -s | tail -n +1 | wc -l) -gt 2 ]; then 
   klambt_docker_drupal_configuration_db.sh
   klambt_docker_update_install.sh
@@ -17,19 +32,19 @@ if [ $(mysql -u $MYSQL_USER --password=$MYSQL_PASSWORD -h $MYSQL_LINK -D $MYSQL_
     klambt_docker_clean_install.sh
 fi
 
+drush vset --yes file_temporary_path /tmp/drupal/ 
+drush vset --yes file_private_path ../private/
+
 klambt_docker_drupal_configuration.sh
 
-chown -R www-data:www-data /var/www/html/sites/default/files
 chmod +w /var/www/html/sites/default/files
-
-
 
 echo '#############################################'
 echo '#           DRUPAL CREDENTIALS              #'
 echo '#                                           #'
 echo '#  Login with:                              #'
 echo "#  Username: $DRUPAL_USERNAME "
-echo "#  Password: $DRUPAL_USER_PASSWORD"
+echo "#  Password: $DRUPAL_USER_GENERATED_PASSWORD"
 echo '#                                           #'
 echo '#############################################'
 

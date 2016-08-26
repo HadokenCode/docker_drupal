@@ -10,7 +10,7 @@ COPY ./scripts/* /usr/local/bin/
 RUN chmod +x /usr/local/bin/klambt_docker_*.sh \
  && /usr/local/bin/klambt_docker_update_debian.sh \
  && /usr/local/bin/klambt_docker_install_drush.sh \
- && /usr/local/bin/klambt_docker_install_drupal-6.sh 
+ && /usr/local/bin/klambt_docker_install_drupal.sh drupal-6
 
 # @todo customization
 CMD ["/usr/local/bin/klambt_docker_drupal_start.sh"]

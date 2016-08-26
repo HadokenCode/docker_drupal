@@ -32,7 +32,7 @@ COPY ./scripts/* /usr/local/bin/
 RUN chmod +x /usr/local/bin/klambt_docker_*.sh \
  && /usr/local/bin/klambt_docker_update_debian.sh \
  && /usr/local/bin/klambt_docker_install_drush.sh \
- && /usr/local/bin/klambt_docker_install_drupal-8.sh 
+ && /usr/local/bin/klambt_docker_install_drupal.sh drupal-8 \
  
 # @todo customization
 CMD ["/usr/local/bin/klambt_docker_drupal_start-8.sh"]

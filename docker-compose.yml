@@ -13,9 +13,13 @@ services:
   drupal_memcached:
     image: memcached:alpine
     container_name: drupal_memcached
+    networks:
+      - klambt_drupal
   drupal_database:
     image: mysql:5.7
     container_name: drupal_database
+    networks:
+      - klambt_drupal
     ports:
       - "3306:3306"
     env_file:
@@ -23,36 +27,45 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: drupal_phpmyadmin
+    networks:
+      - klambt_drupal
     ports:
-      - "81:80"    
-    links:
-      - drupal_database:db     
-  webserver:
+      - "81:80" 
+    depends_on:
+      - drupal_database  
+  drupal_webserver:
     image: klambt/drupal:latest
     container_name: drupal_webserver
-    links:
-      - drupal_memcached
-      - drupal_database
-      - drupal_solr
+    networks:
+      - klambt_drupal
     env_file:
       - ./database.env
       - ./drupal.env
+      - ./varnish.env      
     depends_on:
-      - drupal_database      
+      - drupal_database  
+    privileged: true 
   drupal_varnish:
     image: klambt/varnish:latest
     container_name: drupal_varnish   
-    links: 
-      - webserver:backend-app
+    networks:
+      - klambt_drupal
+    env_file:
+      - ./varnish.env       
     ports:
       - "80:80"
+    expose:
+      - "6082"
+    depends_on:
+      - drupal_webserver 
   drupal_solr:
     image: klambt/solr
     container_name: drupal_solr
-    ports:
-      - "8983:8983"      
-#  watchtower:
-#    image: centurylink/watchtower
-#    container_name: watchtower
-#    volumes:
-#     - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - klambt_drupal
+    expose:
+      - "8983"
+
+networks:
+  klambt_drupal:
+    driver: bridge

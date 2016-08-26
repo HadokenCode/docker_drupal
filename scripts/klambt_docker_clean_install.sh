@@ -7,19 +7,22 @@ echo '#############################################'
 cd $WORKDIR
 
 if [ "$DRUPAL_USER_PASSWORD" = 0 ]; then
-  export DRUPAL_USER_PASSWORD=$(openssl rand -base64 10 | head -c${1:-14})
+   DRUPAL_USER_GENERATED_PASSWORD=$(openssl rand -base64 10 | head -c${1:-14})
+   echo "Admin Password: $DRUPAL_USER_GENERATED_PASSWORD"
+   export DRUPAL_USER_PASSWORD=$DRUPAL_USER_GENERATED_PASSWORD
 fi
 
 drush site-install --db-url=mysql://$MYSQL_USER:$MYSQL_PASSWORD@$MYSQL_LINK:$MYSQL_PORT/$MYSQL_DATABASE --locale=$DRUPAL_LOCALE --account-name=$DRUPAL_USERNAME --account-mail=$DRUPAL_USER_MAIL --account-pass=$DRUPAL_USER_PASSWORD --site-mail=$DRUPAL_SITE_MAIL -y
-drush pm-download -y $(grep -vE "^\s*#" /root/conf/drupal-7-modules.conf  | tr "\n" " ")
 
-#enable one module at a time
-while read STRING
-do
-  STRING=${STRING%$'\r'}
-  drush pm-enable -y $STRING
-  drush cache-clear drush
-done < /root/conf/drupal-7-modules.conf
+if [ -f /root/conf/drupal-7-modules.conf ]; then
+  #enable one module at a time
+  while read STRING
+  do
+    STRING=${STRING%$'\r'}
+    klambt_docker_drupal_module_download.sh $STRING
+    klambt_docker_drupal_module_enable.sh $STRING
+  done < /root/conf/drupal-7-modules.conf
+fi
 
 if [ ! "$DRUPAL_INSTALL_MODULES" = 0 ]; then
     echo '#############################################'
@@ -35,11 +38,8 @@ if [ ! "$DRUPAL_INSTALL_MODULES" = 0 ]; then
     for module in $modules
     do
         module=${module%$'\r'}
-        echo "Module $module missing ... Downloading ..."
-        drush pm-download -y $module
-        echo "Enable $module"
-        drush pm-enable -y $module
-        drush cache-clear drush
+        klambt_docker_drupal_module_download.sh $module
+        klambt_docker_drupal_module_enable.sh $module
     done
    
 else
@@ -48,7 +48,7 @@ else
     echo '#          $DRUPAL_INSTALL_MODULES                 #'
     echo '#                                                  #'
     echo '#  This enabled during runtime with:               #'
-    echo '#  -e "DRUPAL_INSTALL_MODULES='xmlsitemap,varnish" #'
+    echo '#  -e "DRUPAL_INSTALL_MODULES=xmlsitemap,varnish"  #'
     echo '#                                                  #'
     echo '####################################################'
 fi

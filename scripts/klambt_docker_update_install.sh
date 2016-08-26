@@ -6,7 +6,7 @@ echo '#                                           #'
 echo '#############################################'
 
 cd $WORKDIR
-mysql -u $MYSQL_USER --password=$MYSQL_PASSWORD -h $MYSQL_LINK -P $MYSQL_PORT -D $MYSQL_DATABASE --execute="SELECT name FROM system WHERE type='module' AND status='1' AND filename LIKE 'sites/all/modules/%'" -s | tail -n +1 > /root/conf/drupal-installed-modules.txt
+mysql -u $MYSQL_USER --password=$MYSQL_PASSWORD -h $MYSQL_LINK -P $MYSQL_PORT -D $MYSQL_DATABASE --execute="SELECT name FROM system WHERE type='module' AND status='1' AND filename LIKE 'sites/all/modules/%' AND filename NOT LIKE 'sites/all/modules/custom%'" -s | tail -n +1 > /root/conf/drupal-installed-modules.txt
 
 echo '#############################################'
 echo '#    Check Database for missing Modules     #'
@@ -17,11 +17,9 @@ echo '#############################################'
 #download one module at a time
 while read STRING
 do
-  #@todo check if it was already loaded
-
   STRING=${STRING%$'\r'}
   echo "Module $STRING missing ... Downloading ..."
-  drush pm-download $STRING -y
+  klambt_docker_drupal_module_download.sh $STRING
 done < /root/conf/drupal-installed-modules.txt
 
 if [ ! "$DRUPAL_INSTALL_MODULES" = 0 ]; then
@@ -38,11 +36,8 @@ if [ ! "$DRUPAL_INSTALL_MODULES" = 0 ]; then
     for module in $modules
     do
         module=${module%$'\r'}
-        echo "Module $module missing ... Downloading ..."
-        drush pm-download -y $module
-        echo "Enable $module"
-        drush pm-enable -y $module
-        drush cache-clear drush
+        klambt_docker_drupal_module_download.sh $module
+        klambt_docker_drupal_module_enable.sh $module
     done
    
 else
@@ -64,6 +59,8 @@ if [ "$DRUPAL_MEMCACHE_SERVER" != 0 ]; then
   echo '#                                           #'
   echo '#############################################'
 # Memcache Config
+  klambt_docker_drupal_module_enable.sh memcache
+
     { \
         echo ''; \
         echo '# Automatic Memcache configuration'; \
@@ -74,7 +71,6 @@ if [ "$DRUPAL_MEMCACHE_SERVER" != 0 ]; then
         echo '$conf["cache_class_cache_form"] = "DrupalDatabaseCache";'; \
         echo '$conf["memcache_servers"] = array("'$DRUPAL_MEMCACHE_SERVER:11211'" => "default");'; \
     } >> /var/www/html/sites/default/settings.php
-  drush pm-enable memcache
 fi
 
 if [ "$DRUPAL_VARNISH_SERVER" != 0 ]; then
@@ -83,10 +79,13 @@ if [ "$DRUPAL_VARNISH_SERVER" != 0 ]; then
   echo '#                                           #'
   echo '#                                           #'
   echo '#############################################'
-  drush pm-enable varnish expire
+  drush pm-enable -y varnish expire
 fi
 
 drush cache-clear all
 drush pm-refresh
-drush pm-updatestatus
-drush pm-update -y
+
+if [ "$DRUPAL_UPDATE_MODULES" != 0 ]; then
+    drush pm-updatestatus
+    drush pm-update -y
+fi

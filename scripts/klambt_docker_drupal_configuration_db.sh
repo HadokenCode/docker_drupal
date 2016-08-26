@@ -15,6 +15,7 @@ echo '#   Automatic Config Section    #' >> sites/default/settings.php
 echo '#                               #' >> sites/default/settings.php 
 echo '#################################' >> sites/default/settings.php 
 echo ''  >> sites/default/settings.php 
+echo 'error_reporting(0);' >> sites/default/settings.php 
 
 # Database Config 
 { \

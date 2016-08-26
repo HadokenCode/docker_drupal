@@ -10,6 +10,7 @@ ENV MYSQL_USER                 drupal
 ENV MYSQL_PASSWORD             drupal
 ENV MYSQL_PORT                 3306
 ENV MYSQL_LINK                 database_server
+ENV SOLR_LINK                  drupal_solr
 ENV DRUPAL_USERNAME            admin
 ENV DRUPAL_USER_PASSWORD       0
 ENV DRUPAL_USER_MAIL           webmaster@domain.tld
@@ -18,26 +19,34 @@ ENV DRUPAL_MEMCACHE_SERVER     0
 ENV DRUPAL_VARNISH_SERVER      0
 ENV DRUPAL_VARNISH_KEY         xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxx
 ENV DRUPAL_INSTALL_MODULES     0
+ENV DRUPAL_UPDATE_MODULES      0
+ENV DRUPAL_ENVIRONMENT_ID      **** KLAMBT DRUPAL DOCKER
 ENV DEBIAN_INSTALL_PACKAGES    0
 ENV GIT_PULL_CUSTOM            0
-ENV GIT_CUSTOM_SOURCES_SERVER  github.com
+ENV GIT_CUSTOM_SOURCES_SERVER  0
 ENV GIT_CUSTOM_SOURCES_REPOS   0
 ENV GIT_USERNAME               0
 ENV GIT_PASSWORD               0
 ENV GIT_CUSTOM_MODULES_PATH    0
 ENV GIT_CUSTOM_THEMES_PATH     0
+ENV USE_NFS_CLIENT             0
+ENV DRUPAL_FILE_NFS_DIR        0
+ENV DRUPAL_CONFIGURE_SOLR      1
+ENV NFS_OPTIONS                --options=nolock,exec
 
 COPY ./conf /root/conf
 COPY ./scripts/* /usr/local/bin/
+COPY ./custom_modules/* /tmp/custom_modules/
+COPY ./custom_themes/* /tmp/custom_themes/
 
 RUN chmod +x /usr/local/bin/klambt_docker_*.sh \
  && /usr/local/bin/klambt_docker_update_debian.sh \
  && /usr/local/bin/klambt_docker_install_drush.sh \
- && /usr/local/bin/klambt_docker_install_drupal-7.sh \
- && /usr/local/bin/klambt_docker_pull_custom.sh
+ && /usr/local/bin/klambt_docker_install_drupal.sh drupal-7 \
+ && /usr/local/bin/klambt_docker_pull_custom.sh \
+ && /usr/local/bin/klambt_docker_install_drupal_modules.sh drupal-7 \ 
+ && /usr/local/bin/klambt_docker_nfs.sh
 
-COPY ./custom_modules/* /var/www/html/sites/all/modules/custom/
-COPY ./custom_themes/* /var/www/html/sites/all/themes/custom/
 
 # @todo customization
 CMD ["/usr/local/bin/klambt_docker_drupal_start-7.sh"]

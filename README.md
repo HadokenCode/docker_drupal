@@ -1,7 +1,7 @@
 # klambt/drupal
-[![](https://images.microbadger.com/badges/version/klambt/drupal.svg)](http://microbadger.com/images/klambt/drupal "Get your own version badge on microbadger.com") [![](https://images.microbadger.com/badges/image/klambt/drupal.svg)](https://microbadger.com/images/klambt/drupal "Get your own image badge on microbadger.com")
+[![](https://img.shields.io/docker/automated/klambt/drupal.svg)](https://hub.docker.com/r/klambt/drupal/) [![](https://images.microbadger.com/badges/version/klambt/drupal.svg)](http://microbadger.com/images/klambt/drupal "Get your own version badge on microbadger.com") [![](https://images.microbadger.com/badges/image/klambt/drupal.svg)](https://microbadger.com/images/klambt/drupal "Get your own image badge on microbadger.com") [![](https://img.shields.io/docker/pulls/klambt/drupal.svg)](https://hub.docker.com/r/klambt/drupal/) 
 
-*This Docker is still in development*
+*Alpha Version - This Docker is still in development*
 
 This Dockerimage is intented to be used as a Drupal Base Image for our Sites. You may use it, at your own risk. The Image is based on klambt/webserver ([Dockerhub](https://hub.docker.com/r/klambt/webserver/) or [Github](https://github.com/klambt/docker_webserver)) which is an enhanced image of [php:7.0-apache](https://hub.docker.com/_/php/).
 
@@ -20,13 +20,13 @@ Building
 
 ```docker build -t klambt/drupal:latest .```
 
-## Autobuild
+### Autobuild
 This Image will be updated if:
 * The [php](https://hub.docker.com/_/php/) Base Image is Updated (hook)
 * The [drupal](https://hub.docker.com/_/drupal/) Image is Updated (hook)
 * We change it in github
 
-##TAGS
+###TAGS
 
 | tag                          | description                      | size |
 | ---------------------------- | -------------------------------- | ---- |
@@ -37,7 +37,7 @@ This Image will be updated if:
 | drupal-6 |  Drupal 6 Version - Just to test if we can be flexible with this docker ([php:5.6-apache](https://hub.docker.com/_/php/)) | [![](https://images.microbadger.com/badges/image/klambt/drupal:drupal-6.svg)](https://microbadger.com/images/klambt/drupal:drupal-6 "Get your own image badge on microbadger.com") |
 
 
-##Drupal 7 Modules enabled
+### Drupal 7 Modules enabled
 * [varnish] (https://www.drupal.org/project/varnish)
 * [expire] (https://www.drupal.org/project/expire)
 * [memcache] (https://www.drupal.org/project/memcache)
@@ -57,10 +57,10 @@ Settings & Customization
 
 In the next Section, we will describe howto use some of our customizing options. In the Example Section, we will describe some usecases (still in progress)
 
-## Core Hacks
+### Core Hacks
 We will not support Core Hacks
 
-## Modules & Themes
+### Modules & Themes
 
 There are several Methods to integrate & install Modules at Buildtime and Runtime to this Docker:
 * Public Themes and Modules can be added during Build:
@@ -90,6 +90,7 @@ There are several Methods to integrate & install Modules at Buildtime and Runtim
 | GIT_PASSWORD | Git Password | 0 = false |
 | GIT_CUSTOM_MODULES_PATH | Modules Path inside the git repository | 0 = false |
 | GIT_CUSTOM_THEMES_PATH | Themes Path inside the git repository | 0 = false |
+| USE_NFS_CLIENT | Install NFS Client | 1 = true |
 
 
 ### Runtime
@@ -116,6 +117,10 @@ There are several Methods to integrate & install Modules at Buildtime and Runtim
 | GIT_PASSWORD | Git Password | 0 = false |
 | GIT_CUSTOM_MODULES_PATH | Modules Path inside the git repository | 0 = false |
 | GIT_CUSTOM_THEMES_PATH | Themes Path inside the git repository | 0 = false |
+| DRUPAL_FILE_NFS_DIR | NFS location of /sites/default/files | 0 = false |
+| USE_NFS_CLIENT | Install NFS Client | 0 = true |
+| DRUPAL_FILE_NFS_DIR | nfs path for /sites/default/files | 0 = false |
+| NFS_OPTIONS | NFS Mount Options | --options=nolock,exec |
 
 Directorys
 ======
@@ -135,9 +140,13 @@ Directorys
 | path                          | description                      |
 | ---------------------------- | -------------------------------- | 
 | /var/www/html/ | Drupal Base |
+| /var/www/html/sites/default/files | Public Files |
+| /var/www/private | Private Files |
+| /tmp/drupal | Temp Files |
 | /var/www/html/sites/all/modules/custom | Custom Modules |
 | /var/www/html/sites/all/themes/custom  | Custom Themes |
 | /usr/local/bin/klambt_docker_*.sh | Configuration Scripts |
+
 
 Examples
 ======
@@ -159,9 +168,13 @@ services:
   drupal_memcached:
     image: memcached:alpine
     container_name: drupal_memcached
+    networks:
+      - klambt_drupal
   drupal_database:
     image: mysql:5.7
     container_name: drupal_database
+    networks:
+      - klambt_drupal
     ports:
       - "3306:3306"
     env_file:
@@ -169,34 +182,48 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: drupal_phpmyadmin
+    networks:
+      - klambt_drupal
     ports:
-      - "81:80"    
-    links:
-      - drupal_database:db     
-  webserver:
-    image: klambt/drupal:drupal-7
+      - "81:80" 
+    depends_on:
+      - drupal_database  
+  drupal_webserver:
+    image: klambt/drupal:latest
     container_name: drupal_webserver
-    links:
-      - drupal_memcached
-      - drupal_database
-      - drupal_solr
+    networks:
+      - klambt_drupal
     env_file:
       - ./database.env
       - ./drupal.env
+      - ./varnish.env      
     depends_on:
-      - drupal_database      
+      - drupal_database  
+    privileged: true 
   drupal_varnish:
     image: klambt/varnish:latest
     container_name: drupal_varnish   
-    links: 
-      - webserver:backend-app
+    networks:
+      - klambt_drupal
+    env_file:
+      - ./varnish.env       
     ports:
       - "80:80"
+    expose:
+      - "6082"
+    depends_on:
+      - drupal_webserver 
   drupal_solr:
     image: klambt/solr
     container_name: drupal_solr
-    ports:
-      - "8983:8983"  
+    networks:
+      - klambt_drupal
+    expose:
+      - "8983"
+
+networks:
+  klambt_drupal:
+    driver: bridge 
 ```
 
 drupal.env
@@ -206,7 +233,6 @@ DRUPAL_USER_MAIL=webmaster@domain.com
 DRUPAL_SITE_MAIL=webmaster@domain.com
 DRUPAL_MEMCACHE_SERVER=drupal_memcached
 DRUPAL_VARNISH_SERVER=drupal_varnish
-DRUPAL_VARNISH_KEY=d518244a-5bc5-482d-8f8d-a0420e7cb7b7
 DRUPAL_LOCALE=de_DE
 ```
 
@@ -218,6 +244,11 @@ MYSQL_USER=drupal
 MYSQL_PASSWORD=drupal
 MYSQL_PORT=3306
 MYSQL_LINK=drupal_database
+```
+
+*varnish.env*
+```
+DRUPAL_VARNISH_KEY=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxx
 ```
 
 Starting up our Service with a single command:
