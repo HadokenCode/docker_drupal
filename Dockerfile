@@ -1,6 +1,7 @@
 FROM klambt/webserver:latest
 MAINTAINER Tim Weyand <tim.weyand@klambt.de>
 
+ENV KLAMBT_DOCKER_RUNTIME_CONFIGURATION 1
 ENV UPDATE_DEBIAN              1
 ENV INSTALL_DRUSH              1
 ENV INSTALL_DRUPAL             1
@@ -23,7 +24,7 @@ ENV DRUPAL_UPDATE_MODULES      0
 ENV DRUPAL_ENVIRONMENT_ID      **** KLAMBT DRUPAL DOCKER
 ENV DEBIAN_INSTALL_PACKAGES    0
 ENV GIT_PULL_CUSTOM            0
-ENV GIT_CUSTOM_SOURCES_SERVER  0
+ENV GIT_CUSTOM_SOURCES_SERVER  github.com
 ENV GIT_CUSTOM_SOURCES_REPOS   0
 ENV GIT_USERNAME               0
 ENV GIT_PASSWORD               0
@@ -36,8 +37,9 @@ ENV NFS_OPTIONS                --options=nolock,exec
 
 COPY ./conf /root/conf
 COPY ./scripts/* /usr/local/bin/
-COPY ./custom_modules/* /tmp/custom_modules/
-COPY ./custom_themes/* /tmp/custom_themes/
+ADD ./custom_modules/ /tmp/custom_modules/
+ADD ./custom_themes/ /tmp/custom_themes/
+ADD ./custom_libraries/ /tmp/custom_libraries/
 
 RUN chmod +x /usr/local/bin/klambt_docker_*.sh \
  && /usr/local/bin/klambt_docker_update_debian.sh \

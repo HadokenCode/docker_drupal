@@ -38,14 +38,16 @@ if [ "$INSTALL_DRUPAL" = 1 ]; then
     echo '#############################################'
 
     mkdir -p /var/www/.composer
-    mkdir -p /var/www/html/sites/default/files/composer/vendor
-    mkdir -p /var/www/html/sites/all/vendor
-    cd /var/www/html/sites/default/files/composer/
+    mkdir -p /var/www/html/sites/all/libraries/vendor
+    mkdir -p /var/www/html/sites/default/files
+
+    cd /var/www/html/sites/all/libraries/
+    cp /root/conf/composer.json .
     composer install
-    composer require facebook/facebook-instant-articles-sdk-php
+    composer update
 
     chown -R www-data:www-data /var/www/html/sites/default/files
-    ln -s /var/www/html/sites/default/files/composer/vendor /var/www/html/sites/all/vendor
+    chown -R www-data:www-data /var/www/html/sites/all/libraries/
 else
     echo '#############################################'
     echo '#          NOT INSTALLING DRUPAL            #'

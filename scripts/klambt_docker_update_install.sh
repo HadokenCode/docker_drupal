@@ -1,12 +1,14 @@
 #!/bin/bash
 echo '#############################################'
-echo '#              UPDATE DRUPAL                #'
+echo '#         UPDATE existing DRUPAL            #'
 echo '#                                           #'
 echo '#                                           #'
 echo '#############################################'
 
 cd $WORKDIR
 mysql -u $MYSQL_USER --password=$MYSQL_PASSWORD -h $MYSQL_LINK -P $MYSQL_PORT -D $MYSQL_DATABASE --execute="SELECT name FROM system WHERE type='module' AND status='1' AND filename LIKE 'sites/all/modules/%' AND filename NOT LIKE 'sites/all/modules/custom%'" -s | tail -n +1 > /root/conf/drupal-installed-modules.txt
+
+klambt_docker_pull_custom.sh
 
 echo '#############################################'
 echo '#    Check Database for missing Modules     #'
@@ -51,6 +53,14 @@ else
     echo '####################################################'
 fi
 
+echo '#############################################'
+echo '#              ENABLE Composer              #'
+echo '#                                           #'
+echo '#                                           #'
+echo '#############################################'
+
+drush pm-enable -y composer_manager
+
 
 if [ "$DRUPAL_MEMCACHE_SERVER" != 0 ]; then
   echo '#############################################'
@@ -82,6 +92,7 @@ if [ "$DRUPAL_VARNISH_SERVER" != 0 ]; then
   drush pm-enable -y varnish expire
 fi
 
+
 drush cache-clear all
 drush pm-refresh
 
@@ -89,3 +100,6 @@ if [ "$DRUPAL_UPDATE_MODULES" != 0 ]; then
     drush pm-updatestatus
     drush pm-update -y
 fi
+
+cd /var/www/html/sites/all/libraries
+composer update

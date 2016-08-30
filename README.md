@@ -51,6 +51,7 @@ This Image will be updated if:
 * [fb_instant_articles] (https://www.drupal.org/project/fb_instant_articles)
 * [amp] (https://www.drupal.org/project/amp)
 * [amptheme] (https://www.drupal.org/project/amptheme)
+* [features] (https://www.drupal.org/project/features)
 
 Settings & Customization
 ======

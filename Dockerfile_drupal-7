@@ -36,6 +36,9 @@ ENV NFS_OPTIONS                --options=nolock,exec
 
 COPY ./conf /root/conf
 COPY ./scripts/* /usr/local/bin/
+ADD ./custom_modules/ /tmp/custom_modules/
+ADD ./custom_themes/ /tmp/custom_themes/
+ADD ./custom_libraries/ /tmp/custom_libraries/
 
 RUN chmod +x /usr/local/bin/klambt_docker_*.sh \
  && /usr/local/bin/klambt_docker_update_debian.sh \

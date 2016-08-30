@@ -14,6 +14,8 @@ fi
 
 drush site-install --db-url=mysql://$MYSQL_USER:$MYSQL_PASSWORD@$MYSQL_LINK:$MYSQL_PORT/$MYSQL_DATABASE --locale=$DRUPAL_LOCALE --account-name=$DRUPAL_USERNAME --account-mail=$DRUPAL_USER_MAIL --account-pass=$DRUPAL_USER_PASSWORD --site-mail=$DRUPAL_SITE_MAIL -y
 
+klambt_docker_pull_custom.sh
+
 if [ -f /root/conf/drupal-7-modules.conf ]; then
   #enable one module at a time
   while read STRING

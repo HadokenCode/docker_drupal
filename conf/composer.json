@@ -1,0 +1,13 @@
+{
+    "require": {
+        "php": ">=5.3.0",
+        "oyejorge/less.php": "1.7.0.*",
+        "facebook/facebook-instant-articles-sdk-php":"1.*",
+        "mailchimp/mailchimp":"2.0.*"
+    },
+    "config": {
+        "autoloader-suffix": "ComposerManager"
+    },
+    "prefer-stable": true,
+    "minimum-stability": "stable"
+}
