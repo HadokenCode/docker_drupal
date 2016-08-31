@@ -1,7 +1,9 @@
 #!/bin/bash
 
 if [ "$KLAMBT_DOCKER_RUNTIME_CONFIGURATION" = 1 ]; then
-  klambt_docker_runtime_configuration.sh
+  if [ ! -f /var/www/html/sites/default/settings.php ];
+    klambt_docker_runtime_configuration.sh
+  fi 
 else 
     echo '##############################################'
     echo '#  Skipping automatic Runtime Configuration  #'
