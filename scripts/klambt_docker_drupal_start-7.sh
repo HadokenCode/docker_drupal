@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$KLAMBT_DOCKER_RUNTIME_CONFIGURATION" = 1 ]; then
-  if [ ! -f /var/www/html/sites/default/settings.php ];
+  if [ ! -f /var/www/html/sites/default/settings.php ]; then
     klambt_docker_runtime_configuration.sh
   fi 
 else 
